@@ -1,0 +1,18 @@
+name: Native tests
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install runtime
+        run: sudo apt-get update && sudo apt-get install -y ruby ruby-minitest
+      - name: Run native tests
+        run: |
+          ruby -c lib/sessionizer.rb
+          ruby -c bin/sessionize.rb
+          ruby test/sessionizer_test.rb
+          ruby bin/sessionize.rb --gap 1800 fixtures/events.csv > sessions.csv
